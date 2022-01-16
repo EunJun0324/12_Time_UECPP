@@ -1,4 +1,5 @@
 #include "CPlayer.h"
+#include "TPS/CRifle.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -39,6 +40,7 @@ void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	Rifle = ACRifle::Spawn(GetWorld(), this);
 }
 
 void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -53,6 +55,8 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction("Run", EInputEvent::IE_Pressed, this, &ACPlayer::OnRun);
 	PlayerInputComponent->BindAction("Run", EInputEvent::IE_Released, this, &ACPlayer::OffRun);
+
+	PlayerInputComponent->BindAction("Rifle", EInputEvent::IE_Pressed, this, &ACPlayer::OnRifle_Equip);
 
 }
 
@@ -89,4 +93,23 @@ void ACPlayer::OnRun()
 
 void ACPlayer::OffRun()
 { GetCharacterMovement()->MaxWalkSpeed = 400; }
+
+void ACPlayer::OnRifle_Equip()
+{ Rifle->Equip(); }
+
+void ACPlayer::Begin_Equip_Rifle()
+{ Rifle->Begin_Equip(); }
+void ACPlayer::End_Equip_Rifle()
+{ Rifle->End_Equip(); }
+
+void ACPlayer::Begin_Unequip_Rifle()
+{ Rifle->Begin_Unequip(); }
+void ACPlayer::End_Unequip_Rifle()
+{ Rifle->End_Unequip(); }
+
+bool ACPlayer::Get_Equipped_Rifle()
+{ return Rifle->GetEquipped(); }
+
+
+
 

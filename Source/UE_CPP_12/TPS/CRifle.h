@@ -47,6 +47,10 @@ public :
 	void Begin_Equip();
 	void End_Equip();
 
+	void Unequip();
+	void Begin_Unequip();
+	void End_Unequip();
+
 public :
 	FORCEINLINE bool GetEquipped() { return bEquipped; }
 };

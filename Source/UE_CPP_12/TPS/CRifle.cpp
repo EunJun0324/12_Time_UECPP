@@ -12,7 +12,7 @@ ACRifle::ACRifle()
 
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>("Mesh");
 
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> mesh(L"");
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> mesh(L"SkeletalMesh'/Game/Weapons/Meshes/SK_AR4.SK_AR4'");
 	if (mesh.Succeeded()) Mesh->SetSkeletalMesh(mesh.Object);
 
 	ConstructorHelpers::FObjectFinder<UAnimMontage> grap(L"AnimMontage'/Game/Character/Montages/Rifle/Rifle_Grab_Montage.Rifle_Grab_Montage'");
@@ -24,15 +24,17 @@ ACRifle::ACRifle()
 
 ACRifle* ACRifle::Spawn(UWorld* InWorld, ACharacter* InOwnerCharacter)
 {
-	return nullptr;
+	FActorSpawnParameters params;
+	params.Owner = InOwnerCharacter;
+
+	return InWorld->SpawnActor<ACRifle>(params);
 }
 
 void ACRifle::BeginPlay()
 {
 	Super::BeginPlay();
 	OwnerCharacter = Cast<ACharacter>(GetOwner());
-
-	
+	AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), HolsterSocket);
 }
 
 void ACRifle::Tick(float DeltaTime)
@@ -43,13 +45,37 @@ void ACRifle::Tick(float DeltaTime)
 
 void ACRifle::Equip()
 {
+	if (bEquipping) return;
+
+	bEquipping = true;
+
+	if (bEquipped)
+	{
+		Unequip();
+		return;
+	}
+
+	OwnerCharacter->PlayAnimMontage(GrapMontage, 2);
 }
 
 void ACRifle::Begin_Equip()
 {
+	bEquipped = true;
+	AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), HandSocket);
 }
 
 void ACRifle::End_Equip()
+{ bEquipping = false; }
+
+void ACRifle::Unequip()
+{ OwnerCharacter->PlayAnimMontage(UngrapMontage, 2); }
+
+void ACRifle::Begin_Unequip()
 {
+	bEquipped = false;
+	AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), HolsterSocket);
 }
+
+void ACRifle::End_Unequip()
+{ bEquipping = false; }
 
