@@ -5,6 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Animation/AnimMontage.h"
+#include "Camera/CameraComponent.h"
 
 ACRifle::ACRifle()
 {
@@ -18,8 +19,11 @@ ACRifle::ACRifle()
 	ConstructorHelpers::FObjectFinder<UAnimMontage> grap(L"AnimMontage'/Game/Character/Montages/Rifle/Rifle_Grab_Montage.Rifle_Grab_Montage'");
 	if (grap.Succeeded()) GrapMontage = grap.Object;
 
-	ConstructorHelpers::FObjectFinder<UAnimMontage> ungrap(L"AnimMontage'/Game/Character/Montages/Rifle/Rifle_Grab_Montage.Rifle_Grab_Montage'");
-	if (ungrap.Succeeded()) GrapMontage = ungrap.Object;
+	ConstructorHelpers::FObjectFinder<UAnimMontage> ungrap(L"AnimMontage'/Game/Character/Montages/Rifle/Rifle_UnGrab_Montage.Rifle_UnGrab_Montage'");
+	if (ungrap.Succeeded()) UngrapMontage = ungrap.Object;
+
+	ConstructorHelpers::FObjectFinder<UCurveFloat> curve(L"CurveFloat'/Game/TPS/Curve_Aim.Curve_Aim'");
+	if (curve.Succeeded()) Curve = curve.Object;
 }
 
 ACRifle* ACRifle::Spawn(UWorld* InWorld, ACharacter* InOwnerCharacter)
@@ -78,4 +82,56 @@ void ACRifle::Begin_Unequip()
 
 void ACRifle::End_Unequip()
 { bEquipping = false; }
+
+void ACRifle::Begin_Aim()
+{
+	if (!bEquipped) return;
+	if (bEquipping) return;
+	if (!IsAvaliableAim()) return;
+
+	bAiming = true;
+
+	USpringArmComponent* springArm =
+		Cast<USpringArmComponent>(OwnerCharacter->GetComponentByClass(USpringArmComponent::StaticClass()));
+
+	springArm->TargetArmLength = 100;
+	springArm->SocketOffset = FVector(0, 30, 10);
+
+	OwnerCharacter->bUseControllerRotationYaw = true;
+	OwnerCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
+
+}
+
+void ACRifle::End_Aim()
+{
+	if (!bAiming) return;
+
+	bAiming = false;
+
+	USpringArmComponent* springArm =
+		Cast<USpringArmComponent>(OwnerCharacter->GetComponentByClass(USpringArmComponent::StaticClass()));
+
+	springArm->TargetArmLength = 200;
+	springArm->SocketOffset = FVector(0, 60, 0);
+
+	OwnerCharacter->bUseControllerRotationYaw = false;
+	OwnerCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
+}
+
+bool ACRifle::IsAvaliableAim()
+{
+	USpringArmComponent* springArm = 
+		Cast<USpringArmComponent>(OwnerCharacter->GetComponentByClass(USpringArmComponent::StaticClass()));
+
+	UCameraComponent* camera =
+		Cast<UCameraComponent>(OwnerCharacter->GetComponentByClass(UCameraComponent::StaticClass()));
+
+	APlayerController* controller = OwnerCharacter->GetController<APlayerController>();
+
+	return springArm && camera && controller;
+}
+
+void ACRifle::Zooming(float Output)
+{
+}
 

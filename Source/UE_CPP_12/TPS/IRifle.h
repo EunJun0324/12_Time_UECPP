@@ -22,4 +22,6 @@ public:
 	virtual void End_Unequip_Rifle() = 0;
 
 	virtual bool Get_Equipped_Rifle() = 0;
+	virtual bool Get_Aiming_Rifle() = 0;
+
 };

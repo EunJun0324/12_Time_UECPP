@@ -58,6 +58,8 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction("Rifle", EInputEvent::IE_Pressed, this, &ACPlayer::OnRifle_Equip);
 
+	PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Pressed, this, &ACPlayer::OnAim);
+	PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Released, this, &ACPlayer::OffAim);
 }
 
 void ACPlayer::OnMoveForward(float AxisValue)
@@ -97,6 +99,12 @@ void ACPlayer::OffRun()
 void ACPlayer::OnRifle_Equip()
 { Rifle->Equip(); }
 
+void ACPlayer::OnAim()
+{ Rifle->Begin_Aim(); }
+
+void ACPlayer::OffAim()
+{ Rifle->End_Aim(); }
+
 void ACPlayer::Begin_Equip_Rifle()
 { Rifle->Begin_Equip(); }
 void ACPlayer::End_Equip_Rifle()
@@ -109,6 +117,9 @@ void ACPlayer::End_Unequip_Rifle()
 
 bool ACPlayer::Get_Equipped_Rifle()
 { return Rifle->GetEquipped(); }
+
+bool ACPlayer::Get_Aiming_Rifle()
+{ return Rifle->GetAiming(); }
 
 
 

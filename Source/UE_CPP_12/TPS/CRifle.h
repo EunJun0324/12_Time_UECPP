@@ -1,9 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/TimelineComponent.h"
 #include "CRifle.generated.h"
 
 UCLASS()
@@ -20,6 +19,8 @@ private :
 		class UAnimMontage* GrapMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "Montage")
 		class UAnimMontage* UngrapMontage;
+	UPROPERTY(EditDefaultsOnly, Category = "Aim")
+		class UCurveFloat* Curve;
 
 private:
 	UPROPERTY(VisibleDefaultsOnly)
@@ -30,6 +31,10 @@ private:
 
 	bool bEquipped;
 	bool bEquipping;
+	bool bAiming;
+
+	FTimeline Timeline;
+	FOnTimelineFloat OnTimelineFloat;
 
 public:	
 	ACRifle();
@@ -51,6 +56,18 @@ public :
 	void Begin_Unequip();
 	void End_Unequip();
 
+	void Begin_Aim();
+	void End_Aim();
+
+private:
+	bool IsAvaliableAim();
+
+private :
+	UFUNCTION()
+		void Zooming(float Output);
+
 public :
-	FORCEINLINE bool GetEquipped() { return bEquipped; }
+	FORCEINLINE bool GetEquipped() const { return bEquipped; }
+	FORCEINLINE bool GetAiming() const { return bAiming; }
+
 };

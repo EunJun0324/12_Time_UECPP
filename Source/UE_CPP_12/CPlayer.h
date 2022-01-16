@@ -39,6 +39,7 @@ public :
 	virtual void End_Unequip_Rifle() override;
 
 	virtual bool Get_Equipped_Rifle() override;
+	virtual bool Get_Aiming_Rifle() override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -57,5 +58,8 @@ private :
 	void OffRun();
 
 	void OnRifle_Equip();
+
+	void OnAim();
+	void OffAim();
 
 };
