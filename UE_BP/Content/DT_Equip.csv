@@ -1,0 +1,3 @@
+,WeaponType,Montage,PlayRatio
+SwordEquip,Sword,AnimMontage'/Game/Character/Montages/Equip_Sword_Montage.Equip_Sword_Montage',1
+ShotgunEqiup,Shotgun,AnimMontage'/Game/Character/Montages/Equip_Shoutgun_Montage.Equip_Shoutgun_Montage',1
